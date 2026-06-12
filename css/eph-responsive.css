@@ -1,0 +1,213 @@
+/* =========================================================
+   RESPONSIVE STYLES — Heritage Sites Map
+   File ini HANYA menambahkan aturan untuk layar kecil
+   (ponsel & tablet portrait). Tidak ada aturan di
+   eph-common.css maupun eph-heritage-sites.css yang diubah;
+   semua override di bawah hanya aktif di dalam media query.
+
+   Konsep mobile:
+   - Peta tampil penuh sebagai latar belakang secara default.
+   - Panel (daftar / detail / about) menjadi "bottom sheet"
+     yang bisa ditarik (drag) dari bawah, atau diketuk pada
+     pegangannya untuk dibuka/ditutup penuh.
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    position: relative;
+  }
+
+  #panel,
+  #map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    flex: none;
+  }
+
+  /* Peta selalu berukuran penuh dari awal (tidak pernah
+     display:none) agar Leaflet tidak salah hitung ukuran
+     tile, dan langsung tampil sebagai latar belakang. */
+  #map {
+    z-index: 1;
+  }
+
+  /* Panel berperan sebagai bottom sheet: secara default
+     digeser ke bawah sehingga hanya pegangannya yang
+     terlihat, dan peta terlihat penuh di belakangnya. */
+  #panel {
+    z-index: 500;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    transform: translateY(calc(100% - 56px));
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  /* Dipakai oleh JS saat sedang di-drag agar tidak ada
+     animasi transisi (mengikuti jari secara langsung). */
+  #panel.eph-dragging {
+    transition: none;
+  }
+
+  /* ---------- Pegangan (handle) bottom sheet ---------- */
+  #panel-handle {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 56px;
+    cursor: grab;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  #panel-handle:active {
+    cursor: grabbing;
+  }
+
+  #panel-handle .eph-grip {
+    width: 42px;
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  #panel-handle .eph-handle-label {
+    font-family: "Open Sans", sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #fff;
+    opacity: 0.85;
+  }
+
+  /* ---------- Branding & navigasi lebih ringkas ---------- */
+  #branding p {
+    margin: 8px 16px 0;
+    font-size: 11px;
+  }
+
+  #branding h1 {
+    margin: 4px 16px 10px;
+    font-size: 20px;
+  }
+
+  nav ul {
+    margin: 0 16px;
+  }
+
+  nav li a {
+    padding: 5px 10px 5px 12px;
+    font-size: 11px;
+  }
+
+  /* ---------- Area filter ---------- */
+  #index header {
+    padding: 12px 16px;
+  }
+
+  .filter-row {
+    flex-direction: column;
+  }
+
+  .filter-box select {
+    font-size: 13px;
+  }
+
+  #filter-features {
+    padding-top: 10px;
+  }
+
+  .feat-btn {
+    flex: 1 1 auto;
+    text-align: center;
+    padding: 7px 6px;
+    font-size: 10.5px;
+  }
+
+  /* ---------- Daftar indeks: target sentuh lebih besar ---------- */
+  #index-list li a {
+    margin: 0 16px;
+    padding: 10px 0;
+    font-size: 13.5px;
+    line-height: 20px;
+  }
+
+  /* ---------- Panel detail ---------- */
+  #details,
+  #about {
+    padding: 16px;
+  }
+
+  #details h1 {
+    font-size: 19px;
+    padding-right: 40px; /* ruang untuk logo Wikidata di kanan atas */
+  }
+
+  #details .main-text {
+    padding: 0;
+  }
+
+  #details figure {
+    float: none;
+    width: 100%;
+    margin: 0 0 16px 0;
+  }
+
+  #details figure img {
+    width: 100%;
+    height: auto;
+  }
+
+  #details figure.nodata {
+    height: 70px;
+    line-height: 70px;
+  }
+
+  #details .designations li {
+    margin-right: 0;
+  }
+
+  /* ---------- Tentang ---------- */
+  #about #eph {
+    float: none;
+    display: block;
+    margin: 0 auto 14px;
+    width: 130px;
+  }
+
+  /* ---------- Popup peta ---------- */
+  .leaflet-popup-content {
+    font-size: 15px;
+    line-height: 18px;
+  }
+}
+
+/* Ponsel berukuran sangat kecil */
+@media (max-width: 380px) {
+  #branding h1 {
+    font-size: 18px;
+  }
+
+  .feat-btn {
+    font-size: 9.5px;
+    padding: 6px 4px;
+  }
+
+  #index-list li a {
+    font-size: 13px;
+  }
+}

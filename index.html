@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Heritage Sites Map – Encyclopedia of Philippine Heritage</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,600i,700|Merriweather:300,300i" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
@@ -9,6 +10,7 @@
 <link rel="stylesheet" href="css/leaflet.extra-markers.min.css" />
 <link rel="stylesheet" href="css/eph-common.css" />
 <link rel="stylesheet" href="css/eph-heritage-sites.css" />
+<link rel="stylesheet" href="css/eph-responsive.css" />
 </head>
 <body>
 <section id="panel">
@@ -27,7 +29,7 @@
   </div>
   <section id="index" class="panel-content" data-display="flex">
 <header>
-<div style="display:flex; gap:12px;">
+<div class="filter-row" style="display:flex; gap:12px;">
 
   <!-- Dropdown Wilayah -->
   <div class="filter-box" style="flex:2;">
@@ -98,5 +100,6 @@
 <script src="js/eph-heritage-sites-globals.js"></script>
 <script src="js/eph-common.js"></script>
 <script src="js/eph-heritage-sites.js"></script>
+<script src="js/eph-responsive.js"></script>
 </body>
 </html>
