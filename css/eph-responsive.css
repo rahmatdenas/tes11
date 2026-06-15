@@ -110,9 +110,6 @@
   }
 
   /* ---------- Area filter ---------- */
-  #index header {
-    padding: 12px 16px;
-  }
 
   .filter-box select {
     font-size: 13px;
