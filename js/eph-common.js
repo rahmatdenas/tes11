@@ -264,7 +264,7 @@ function generateFigure(filename, classNames = []) {
     return (
       `<figure class="${classNames.join(' ')}">` +
         `<a href="${COMMONS_WIKI_URL_PREF}File:${encodedFilename}">` +
-          `<img class="loading" src="${COMMONS_WIKI_URL_PREF}Special:FilePath/${encodedFilename}?width=300" alt="" onload="this.className=''">` +
+          `<img class="loading" src="${COMMONS_WIKI_URL_PREF}Special:FilePath/${encodedFilename}?width=500" alt="" onload="this.className=''">` +
         '</a>' +
         // 3. Pasang ID unik di elemen figcaption
         `<figcaption id="${uniqueId}">(Loading…)</figcaption>` +
