@@ -32,17 +32,9 @@
     return Math.min(Math.max(y, 0), collapsedTranslate());
   }
 
-function applyTransform(y) {
+  function applyTransform(y) {
     currentY = y;
-    
-    // KUNCI PENYELAMAT iOS: 
-    // Jika panel terbuka penuh (y = 0), matikan properti 'transform' sepenuhnya.
-    // Ini akan menipu Safari agar tidak panik saat membuka dropdown.
-    if (y === 0) {
-      panel.style.transform = 'none';
-    } else {
-      panel.style.transform = 'translateY(' + y + 'px)';
-    }
+    panel.style.transform = 'translateY(' + y + 'px)';
   }
 
   function updateLabel(expanded) {
@@ -179,28 +171,16 @@ function onTouchEnd() {
     panel.insertBefore(handle, panel.firstChild);
   }
 
-// Tambahkan variabel ini di atas fungsi
-  var isPanelInitialized = false;
-
   function handleViewportChange() {
     if (!panel) return;
 
     if (isMobile()) {
       if (!document.getElementById('panel-handle')) buildHandle();
-      
-      // KUNCI PENYELESAIAN: 
-      // Hanya paksa panel ke bawah (setExpanded) SAAT PERTAMA KALI DIMUAT.
-      // Jika layar berubah ukuran karena roda menu iOS muncul, panel akan diam saja.
-      if (!isPanelInitialized) {
-        setExpanded(false, false);
-        isPanelInitialized = true;
-      }
-
+      setExpanded(false, false);
     } else {
       panel.style.transform = '';
       panel.classList.remove('eph-dragging');
       currentY = 0;
-      isPanelInitialized = false; // Reset memori jika pengguna kembali ke layar Desktop
     }
   }
 
@@ -240,5 +220,3 @@ function onTouchEnd() {
   window.addEventListener('resize', handleViewportChange);
 
 })();
-
-
