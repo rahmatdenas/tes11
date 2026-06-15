@@ -216,13 +216,12 @@ function onTouchEnd() {
       });
     }
 // ========================================================
-document.addEventListener('touchstart', function(e) {
-      var select = e.target.closest('select');
-      // Jika pengguna menyentuh select yang STATUSNYA SUDAH FOKUS aktif
-      if (select && document.activeElement === select) {
-        select.blur(); // Netralkan fokus seketika sebelum Safari membuka menu
-      }
-    }, { passive: true });
+var semuaDropdown = document.querySelectorAll('select');
+    semuaDropdown.forEach(function(dropdown) {
+      dropdown.addEventListener('change', function() {
+        this.blur(); 
+      });
+    });
 // ========================================================
   });
 
