@@ -95,7 +95,7 @@ nav li a {
 
 nav li.selected a,
 nav li.selected a:hover {
-  background: #fff;
+  background: transparent;
 }
 
 #loading {
