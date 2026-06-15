@@ -118,10 +118,6 @@
     padding: 12px 16px;
   }
 
-  .filter-row {
-    flex-direction: column;
-  }
-
   .filter-box select {
     font-size: 13px;
   }
