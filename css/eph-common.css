@@ -103,6 +103,7 @@ nav li a::after {
   border-radius: 0 6px 0 0;
   background: inherit;
   transform: skew(30deg);
+  border-bottom: 1px solid #FFF;
 }
 
 nav li.selected a,
