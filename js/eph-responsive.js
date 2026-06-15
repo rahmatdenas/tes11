@@ -73,10 +73,9 @@
 
     // PENTING: 'A' (tautan) dihapus dari daftar pengecualian ini!
     // Hanya Input, Tombol, dan Dropdown yang memblokir tarikan panel
-    var interactiveTags = ['BUTTON', 'SELECT', 'OPTION', 'INPUT'];
-    if (interactiveTags.indexOf(target.tagName) !== -1 || target.closest('button, select, input')) {
-      return;
-    }
+   if (target.closest('select, input, textarea, button, label')) {
+  return; 
+}
 
     dragging = true;
     moved = false;
