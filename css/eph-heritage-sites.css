@@ -15,7 +15,7 @@
 nav ul {
   display: flex;
   justify-content: space-between;
-  padding: 0 20px; /* Sesuaikan angka 20px dengan jarak pinggir layout Anda */
+  padding: 0; /* Sesuaikan angka 20px dengan jarak pinggir layout Anda */
   margin: 0;
   list-style: none;
 }
