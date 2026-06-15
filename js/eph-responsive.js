@@ -219,18 +219,13 @@ function onTouchEnd() {
 var semuaDropdown = document.querySelectorAll('select');
     semuaDropdown.forEach(function(dropdown) {
       
-      // 1. Matikan kebocoran event agar tidak dibajak oleh skrip Panel/Peta
-      ['touchstart', 'touchend', 'click'].forEach(function(namaEvent) {
+      // Menghentikan semua bentuk sentuhan & klik agar tidak bocor ke bawah
+      ['touchstart', 'touchmove', 'touchend', 'click'].forEach(function(namaEvent) {
         dropdown.addEventListener(namaEvent, function(e) {
           e.stopPropagation(); 
         });
       });
 
-      // 2. Bersihkan memori fokus Safari HANYA saat opsi berhasil diubah
-      dropdown.addEventListener('change', function() {
-        this.blur();
-      });
-      
     });
 // ========================================================
   });
