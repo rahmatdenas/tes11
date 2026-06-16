@@ -181,9 +181,9 @@ optgroup option {
 #details .designations li {
   position: relative;
   list-style: none;
-  padding: 0 0 15px 65px;
+  padding: 0 0 15px 0px;
   min-height: 50px;
-  margin-right: 15px; /* TAMBAHAN BARU: Memberi jarak aman di sebelah kanan agar teks tidak menabrak gambar */
+  margin-right: 0px; /* TAMBAHAN BARU: Memberi jarak aman di sebelah kanan agar teks tidak menabrak gambar */
 }
 
 #details .designations li h3 {
