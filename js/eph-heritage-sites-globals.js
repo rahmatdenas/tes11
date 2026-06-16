@@ -149,21 +149,30 @@ function getSparqlQuery4(qid) {
 
 // 8. SPARQL_QUERY_5: Fungsi khusus mengambil arsip gambar untuk satu ID saat diklik
 function getSparqlQuery5(qid) {
-  return `SELECT ?siteQid ?vicinityImage ?pastImage WHERE {
+  return `SELECT ?siteQid ?vicinityImage ?vicinityCaption ?pastImage ?pastCaption WHERE {
+    # <SPARQLVALUESCLAUSE>
     VALUES ?site { wd:${qid} }
     
-    # 1. AMBIL GAMBAR LINGKUNGAN SEKITAR
+    # 1. AMBIL GAMBAR LINGKUNGAN SEKITAR & KETERANGAN
     OPTIONAL {
       ?site p:P18 ?vicinityStatement .
       ?vicinityStatement ps:P18 ?vicinityImage .
       FILTER EXISTS { ?vicinityStatement pq:P3831 wd:Q16189205 }
+      OPTIONAL {
+        ?vicinityStatement pq:P2096 ?vicinityCaption .
+        FILTER(LANG(?vicinityCaption) = "id")
+      }
     }
 
-    # 2. AMBIL GAMBAR MASA LALU (Hilangkan fungsi SAMPLE agar kueri murni asinkronus tanpa GROUP BY)
+    # 2. AMBIL GAMBAR MASA LALU & KETERANGAN
     OPTIONAL {
       ?site p:P18 ?pastImgStmt .
       ?pastImgStmt ps:P18 ?pastImage .
       ?pastImgStmt pq:P180 wd:Q192630 .
+      OPTIONAL {
+        ?pastImgStmt pq:P2096 ?pastCaption .
+        FILTER(LANG(?pastCaption) = "id")
+      }
     }
 
     BIND (SUBSTR(STR(?site), 32) AS ?siteQid) .
