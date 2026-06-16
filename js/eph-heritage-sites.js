@@ -65,8 +65,6 @@ function loadPrimaryData() {
 
         populateImageAndWikipediaData(),                     // Jalur 2: Gambar & Artikel
 
-        populateImportantEventsData()                        // Jalur 3: Peristiwa Penting
-
       ]);
 
     })
@@ -169,44 +167,30 @@ function populateImageAndWikipediaData() {
       if ('wikipediaUrlTitle' in result) {
         record.articleTitle = decodeURIComponent(result.wikipediaUrlTitle.value);
       }
-
-      if (!record.vicinityImages) {
-        record.vicinityImages = [];
-      }
-      if ('vicinityImage' in result) {
-        let fotoTambahan = extractImageFilename(result.vicinityImage);
-        if (!record.vicinityImages.includes(fotoTambahan)) {
-          record.vicinityImages.unshift(fotoTambahan);
-        }
-      }
-
-      if ('pastImage' in result) {
-        if (!record.pastImage) {
-          record.pastImage = extractImageFilename(result.pastImage);
-        }
-      }
     },
   );
 }
+// ====================================================================
+// FUNGSI JARING 3: Mengambil Peristiwa Penting Saat Diklik (Fase 5)
+// ====================================================================
+function populateImportantEventsData(qid) {
+  let record = Records[qid];
+  let queryStr = getSparqlQuery4(qid); // Memanggil fungsi kueri dari JS 2
 
-function populateImportantEventsData() {
+  // Kosongkan array untuk mencegah duplikasi jika pengguna mengklik pin yang sama dua kali
+  record.events = []; 
+
   return queryWdqsThenProcess(
-    SPARQL_QUERY_4,
+    queryStr,
     function(result) {
-      let record = Records[result.siteQid.value];
-      
+      // --- LOGIKA PENGOLAHAN WAKTU (TIDAK BERUBAH) ---
       if ('eventLabel' in result && result.eventLabel.value) {
-        let eventObj = {
-          label: result.eventLabel.value,
-          time: ''
-        };
-
-        // Siapkan variabel waktu & baca presisinya masing-masing menggunakan fungsi kalender pintar
+        let eventObj = { label: result.eventLabel.value, time: '' };
+        
         let pt = result.pointInTime ? formatWikidataDate(result.pointInTime.value, result.ptPrecision ? result.ptPrecision.value : 9) : null;
         let st = result.startTime ? formatWikidataDate(result.startTime.value, result.stPrecision ? result.stPrecision.value : 9) : null;
         let et = result.endTime ? formatWikidataDate(result.endTime.value, result.etPrecision ? result.etPrecision.value : 9) : null;
 
-        // Logika pengisian teks waktu di antarmuka
         if (pt) {
           eventObj.time = pt;
         } else if (st && et) {
@@ -217,14 +201,53 @@ function populateImportantEventsData() {
           eventObj.time = `Selesai ${et}`;
         }
 
-        // Cek duplikasi agar tak berulang
         let isDuplicate = record.events.some(e => e.label === eventObj.label && e.time === eventObj.time);
-        if (!isDuplicate) {
-          record.events.push(eventObj);
-        }
+        if (!isDuplicate) record.events.push(eventObj);
       }
+    },
+    function() {
+      // --- CALLBACK: Dijalankan setelah data selesai ditarik ---
+      renderEventsInPanel(qid); 
     }
   );
+}
+
+// ====================================================================
+// FUNGSI RENDER: Menyuntikkan Data ke Placeholder
+// ====================================================================
+function renderEventsInPanel(qid) {
+  let record = Records[qid];
+  let container = document.getElementById(`events-container-${qid}`);
+  
+  // Cegah error jika elemen tidak ditemukan (misal pengguna sudah menutup panel sebelum loading selesai)
+  if (!container) return; 
+
+  if (record.events && record.events.length > 0) {
+    const EVENT_ORDER = {
+      'pembebasan tanah': 1, 'peletakan batu pertama': 2,
+      'konstruksi': 3, 'dibuka untuk umum': 4,
+      'upacara pembukaan': 5, 'perombakan': 6, 'renovasi': 6
+    };
+
+    record.events.sort((a, b) => {
+      let orderA = EVENT_ORDER[a.label.toLowerCase()] || 99;
+      let orderB = EVENT_ORDER[b.label.toLowerCase()] || 99;
+      return orderA - orderB;
+    });
+
+    let html = '<h2>Peristiwa Penting</h2><ul class="designations" style="margin-left:-65px"><li>';
+    record.events.forEach(ev => {
+      let timeText = ev.time ? ` (${ev.time})` : ''; 
+      html += `<p><strong>${ev.label}</strong>${timeText}</p>`;
+    });
+    html += '</li></ul>';
+    
+    container.innerHTML = html;
+    container.classList.remove('loading');
+  } else {
+    // Jika ternyata bangunan ini tidak punya data peristiwa, hilangkan placeholder
+    container.innerHTML = '';
+  }
 }
 
 function populateDesignationIndex() {
@@ -484,9 +507,18 @@ updateFeatureCounts();
 
 
 function activateSite(qid) {
-  displayRecordDetails(qid);
+  displayRecordDetails(qid); // Ini akan memicu generateRecordDetails dan memunculkan panel+placeholder
+  
+  // === INI DIA PEMICUNYA (Fase 5) ===
+  // Kedua fungsi ini akan berlari secara asinkronus (bersamaan) 
+  // di latar belakang untuk mengisi placeholder yang kosong.
+  populateImportantEventsData(qid);
+  populateHistoricalImagesData(qid);
+  // =================================
+
   let record = Records[qid];
   if (record.isCompound) {
+    // Biarkan kosong sesuai kode aslimu
   }
   else if (record.mapMarker) {
     Cluster.zoomToShowLayer(
@@ -557,44 +589,13 @@ function generateRecordDetails(qid) {
     });
     
   designationsHtml += '</ul>';
-
 // ====================================================================
-  // CETAK HTML PERISTIWA PENTING
+  // PLACEHOLDER ARSIP & PERISTIWA PENTING
   // ====================================================================
-  let eventsHtml = '';
-  if (record.events && record.events.length > 0) {
-    
-    // 1. KODE BARU: Kamus Bobot Urutan (Semua huruf kecil agar kebal dari salah ketik Wikidata)
-    const EVENT_ORDER = {
-      'pembebasan tanah': 1,
-      'peletakan batu pertama': 2,
-      'konstruksi': 3,
-      'dibuka untuk umum': 4,
-      'upacara pembukaan': 5,
-      'perombakan': 6,
-      'renovasi': 6
-    };
+  let arsipHtml = `<div id="arsip-container-${qid}" class="loading"><div class="loader"></div></div>`;
+  let eventsHtml = `<div id="events-container-${qid}" class="loading"><div class="loader"></div></div>`;
 
-    // 2. KODE BARU: Urutkan array events sebelum dicetak
-    record.events.sort((a, b) => {
-      // Ambil bobot berdasarkan label. Jika label tidak ada di kamus, beri bobot 99 (taruh di paling bawah)
-      let orderA = EVENT_ORDER[a.label.toLowerCase()] || 99;
-      let orderB = EVENT_ORDER[b.label.toLowerCase()] || 99;
-      return orderA - orderB;
-    });
-
-    // 3. Cetak ke HTML seperti biasa
-    eventsHtml += '<h2>Peristiwa Penting</h2><ul class="designations" style="margin-left:-65px"><li>';
-    
-    record.events.forEach(ev => {
-      let timeText = ev.time ? ` (${ev.time})` : ''; 
-      eventsHtml += `<p><strong>${ev.label}</strong>${timeText}</p>`;
-    });
-    
-    eventsHtml += '</li></ul>';
-  }
-  // ====================================================================
-
+  // --- BAGIAN INI TETAP ADA, HANYA DITAMBAH isinya ---
   let panelElem = document.createElement('div');
   
   panelElem.innerHTML =
@@ -604,12 +605,76 @@ function generateRecordDetails(qid) {
     figureHtml + 
     articleHtml +
     designationsHtml + 
-    eventsHtml;  
-  
+    arsipHtml +  // <-- Ini tambahan barunya
+    eventsHtml;  // <-- Ini tambahan barunya
+
   record.panelElem = panelElem;
 
   if (record.articleTitle) displayArticleExtract(record.articleTitle, panelElem.querySelector('.article'));
   queryOsm(qid);
+}
+
+// ====================================================================
+// FUNGSI JARING 4: Mengambil Arsip Foto Saat Diklik (Fase 5)
+// ====================================================================
+function populateHistoricalImagesData(qid) {
+  let record = Records[qid];
+  let queryStr = getSparqlQuery5(qid); // Memanggil kueri dinamis untuk foto
+
+  return queryWdqsThenProcess(
+    queryStr,
+    function(result) {
+      // Ambil gambar lingkungan
+      if ('vicinityImage' in result) {
+        let fotoTambahan = extractImageFilename(result.vicinityImage);
+        if (!record.vicinityImages.includes(fotoTambahan)) {
+          record.vicinityImages.unshift(fotoTambahan);
+        }
+      }
+      // Ambil gambar masa lalu / arsip sejarah
+      if ('pastImage' in result) {
+        if (!record.pastImage) {
+          record.pastImage = extractImageFilename(result.pastImage);
+        }
+      }
+    },
+    function() {
+      // CALLBACK: Render ke layar setelah data terkumpul
+      renderHistoricalImagesInPanel(qid);
+    }
+  );
+}
+
+// ====================================================================
+// FUNGSI RENDER ARSIP FOTO
+// ====================================================================
+function renderHistoricalImagesInPanel(qid) {
+  let record = Records[qid];
+  let container = document.getElementById(`arsip-container-${qid}`);
+  if (!container) return; // Cegah error jika panel keburu ditutup
+
+  let html = '';
+  
+  // Cetak foto arsip masa lalu/restorasi jika ada
+  if (record.pastImage) {
+    html += generateFigure(record.pastImage);
+  }
+  
+  // Cetak foto-foto lingkungan sekitar
+  if (record.vicinityImages && record.vicinityImages.length > 0) {
+    record.vicinityImages.forEach(imgFilename => {
+      html += generateFigure(imgFilename);
+    });
+  }
+
+  // Jika ada gambar yang berhasil diambil, suntikkan ke placeholder
+  if (html !== '') {
+    container.innerHTML = '<h2>Arsip & Foto Lingkungan</h2>' + html;
+    container.classList.remove('loading');
+  } else {
+    // Jika tidak ada data foto arsip untuk bangunan ini, hilangkan wadah loadingnya
+    container.innerHTML = '';
+  }
 }
 
 function displayArticleExtract(title, elem) {
