@@ -149,7 +149,7 @@
     padding: 0;
   }
 
-  #details figure {
+  #details > figure {
     float: none;
     width: 100%;
     margin: 0 0 16px 0;
