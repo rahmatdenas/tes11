@@ -430,11 +430,14 @@ function updateFeatureCounts() {
       if (activeFeatures.has('article') && record.articleTitle === undefined) matchFeature = false;
     }
 
-    // KODE BARU: Cek pencarian teks
+    // Cek pencarian teks dengan keamanan ekstra (mencegah crash jika indexTitle kosong)
     let matchSearch = true;
     if (currentSearchQuery.trim() !== '') {
-      // Mencari kecocokan pada judul situs bersejarah
-      matchSearch = record.indexTitle.toLowerCase().includes(currentSearchQuery);
+      if (record.indexTitle) {
+        matchSearch = record.indexTitle.toLowerCase().includes(currentSearchQuery);
+      } else {
+        matchSearch = false; // Lewati jika tidak ada judul
+      }
     }
 
     // hitung hasil akhir
@@ -443,12 +446,17 @@ function updateFeatureCounts() {
     }
   });
 
-  // update tombol
-  document.getElementById('btn-all').textContent = 'Semua';
-  document.getElementById('btn-image').textContent = 'Ber-Gambar';
-  document.getElementById('btn-article').textContent = 'Ber-Artikel Wikipedia';
+  // PENGAMANAN BARU: Cek dulu apakah elemen tombol benar-benar ada di HTML sebelum mengubah teksnya.
+  // Juga mendeteksi otomatis lewat data-filter jika ID tidak cocok.
+  let btnAll = document.getElementById('btn-all');
+  let btnImg = document.getElementById('btn-image') || document.querySelector('[data-filter="image"]');
+  let btnArt = document.getElementById('btn-article') || document.querySelector('[data-filter="article"]');
 
-  // KODE BARU: Update input placeholder (bukan textContent)
+  if (btnAll) btnAll.textContent = 'Semua';
+  if (btnImg) btnImg.textContent = 'Ber-Gambar';
+  if (btnArt) btnArt.textContent = 'Ber-Artikel Wikipedia';
+
+  // Update input placeholder (bukan textContent)
   let searchInput = document.getElementById('search-input');
   if (searchInput) {
     searchInput.placeholder = `Hasil: ${total} (Ketik untuk mencari...)`;
@@ -473,16 +481,21 @@ function applyIntersectionFilter() {
       if (activeFeatures.has('article') && record.articleTitle === undefined) matchFeature = false;
     }
 
-    // KODE BARU: Cek pencarian teks
+    // Cek pencarian teks dengan keamanan ekstra
     let matchSearch = true;
     if (currentSearchQuery.trim() !== '') {
-      matchSearch = record.indexTitle.toLowerCase().includes(currentSearchQuery);
+      if (record.indexTitle) {
+        matchSearch = record.indexTitle.toLowerCase().includes(currentSearchQuery);
+      } else {
+        matchSearch = false;
+      }
     }
 
     return matchRegion && matchFeature && matchSearch;
 
   }).sort((a, b) => {
-    // LOGIKA PENGURUTAN (TIDAK BERUBAH)
+    
+    // LOGIKA PENGURUTAN
     if (currentSortMode === 'age') {
       let aHasYear = !!a.rawTahunBerdiri;
       let bHasYear = !!b.rawTahunBerdiri;
@@ -499,6 +512,7 @@ function applyIntersectionFilter() {
     } else {
       return a.indexTitle.localeCompare(b.indexTitle);
     }
+    
   });
 
   validRecords.forEach(record => {
@@ -511,10 +525,8 @@ function applyIntersectionFilter() {
     Map.fitBounds(Cluster.getBounds());
   }
   
-  // Hitung ulang placeholder sesuai jumlah yang terfilter saat ini
   updateFeatureCounts();
 }
-
 
 function activateSite(qid) {
   displayRecordDetails(qid); // Ini akan memicu generateRecordDetails dan memunculkan panel+placeholder
