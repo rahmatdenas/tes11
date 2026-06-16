@@ -54,20 +54,29 @@ function loadPrimaryData() {
 
   populateDesignationTypesData()
     .then(() => {
-      // OPTIMASI: Hanya tunggu Jalur Koordinat selesai agar peta cepat terbuka!
-      // Kita menghapus Promise.all di sini.
       return populateCoordinatesData().then(populateMapAndIndex);
     })
     .then(() => {
-      // 1. Langsung aktifkan aplikasi (buka kunci layar loading)
       enableApp(); 
 
-      // 2. Jalankan Jalur Gambar & Artikel di latar belakang tanpa memblokir pengguna
-      populateImageAndWikipediaData().then(() => {
-        // Setelah data gambar/artikel selesai diunduh, hitung ulang filter dan perbarui tampilan
-        updateFeatureCounts();      
-        applyIntersectionFilter(); 
-      });
+      // Tambahkan .catch() di akhir jalur ini!
+      populateImageAndWikipediaData()
+        .then(() => {
+          updateFeatureCounts();      
+          applyIntersectionFilter(); 
+        })
+        .catch(error => {
+          // INI ADALAH TANGKAPAN ERROR-NYA
+          console.warn("Gagal mengambil data Gambar/Wikipedia dari server, tetapi peta tetap bisa digunakan.", error);
+          // Tetap jalankan perhitungan agar filter tidak rusak
+          updateFeatureCounts();      
+          applyIntersectionFilter();
+        });
+    })
+    .catch(error => {
+       // Jaring pengaman utama jika data dasar gagal dimuat
+       console.error("Data utama gagal dimuat. Cek koneksi atau server Wikidata.", error);
+       alert("Maaf, server database sedang sibuk. Beberapa data mungkin tidak tampil.");
     });
 }
 function doPreProcessing() {
