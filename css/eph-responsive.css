@@ -149,11 +149,16 @@
     padding: 0;
   }
 
- .main-image {
-    float: none;
-    width: 100%;
-    margin: 0 0 16px 0;
-  }
+#details > figure {
+  float: none;
+  width: 100%;
+  margin: 0 0 16px 0;
+}
+   [id^="arsip-container-"] figure {
+  float: left; /* Atau nilai lain yang kamu mau */
+  width: auto; 
+  margin: 0;
+}
 
   #details figure img {
     width: 100%;
