@@ -661,7 +661,7 @@ function renderHistoricalImagesInPanel(qid) {
   function buildImageBlock(imgObj) {
     // KUNCI PERUBAHAN: Memasang border-top langsung di div pembungkus.
     // padding-top: 20px diberikan agar ada jarak nafas antara garis dan foto.
-    let block = '<div class="arsip-block" style="border-top: 1px solid #eaa; padding-top: 20px; margin-bottom: 30px; overflow: hidden;">';
+    let block = '<div class="arsip-block" style="border-top: 1px solid #eaa; padding-top: 20px; overflow: hidden;">';
     
     // Cetak fotonya terlebih dahulu
     block += generateFigure(imgObj.file);
