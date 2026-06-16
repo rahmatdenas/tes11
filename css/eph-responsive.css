@@ -145,32 +145,30 @@
     padding-right: 40px; /* ruang untuk logo Wikidata di kanan atas */
   }
 
-  #details .main-text {
-    padding: 0;
-  }/* 1. GAMBAR UTAMA (Hanya anak langsung dari #details) */
+/* 1. ATURAN GAMBAR UTAMA */
+/* Kita targetkan hanya figure yang anak langsung dari #details */
 #details > figure {
-  float: none;
-  width: 100%;
-  margin: 0 0 16px 0;
+    width: 100% !important; 
+    float: none !important;
+    margin: 0 0 16px 0 !important;
 }
 
-#details > figure > img {
-  width: 100%;
-  height: auto;
-  box-sizing: border-box;
+#details > figure img {
+    width: 100% !important;
+    height: auto !important;
 }
 
-/* 2. GAMBAR ARSIP (Sangat spesifik di dalam kontainer arsip) */
-[id^="arsip-container-"] figure {
-  float: left; 
-  width: auto; 
-  margin: 0 10px 10px 0; /* Memberi jarak antar gambar arsip */
+/* 2. ATURAN GAMBAR ARSIP (Overrides) */
+/* Kita paksa agar figure di dalam arsip container tidak ikut-ikutan */
+#details [id^="arsip-container-"] figure {
+    width: 120px !important; /* Atur angka ini sesuai selera "kecil"-mu */
+    float: none !important;
+    margin: 0 0 10px 0 !important;
 }
 
-[id^="arsip-container-"] figure img {
-  width: auto;
-  height: auto;
-  box-sizing: border-box;
+#details [id^="arsip-container-"] figure img {
+    width: 100% !important; /* Mengikuti lebar figure yang 120px tadi */
+    height: auto !important;
 }
    
 
