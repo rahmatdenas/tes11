@@ -109,8 +109,8 @@ function populateDesignationTypesData() {
         record.designations[designationQid] = new Designation();
       }
       
-      if ('p131Label' in result && result.p131Label.value) {
-        record.lokasiSpesifik = result.p131Label.value;
+if ('p131LokasiLabel' in result && result.p131LokasiLabel.value) {
+        record.lokasiSpesifik = result.p131LokasiLabel.value;
       }
 
       if ('p131Image' in result && result.p131Image.value) {
