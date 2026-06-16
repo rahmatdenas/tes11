@@ -53,7 +53,7 @@ const DESIGNATION_TYPES = {
 
 // 4. SPARQL_QUERY_0: Versi Optimasi Ekstrem (Tanpa FILTER LANG & ORDER BY)
 const SPARQL_QUERY_0 =
-`SELECT ?siteQid ?siteLabel ?designationQid (?p131LokasiLabel AS ?p131Label) ?tahunBerdiriMentah ?tahunPresisi WHERE {
+`SELECT ?siteQid ?siteLabel ?designationQid ?p131LokasiLabel ?tahunBerdiriMentah ?tahunPresisi WHERE {
   # 1. Daftarkan target Kabupaten/Kota
   VALUES ?designation { wd:Q6019 wd:Q6024 wd:Q6038 wd:Q6032 wd:Q6042 wd:Q6048 wd:Q6103 wd:Q6065 wd:Q6055 wd:Q6058 wd:Q6083 wd:Q6093 wd:Q7248 wd:Q7253 wd:Q7256 wd:Q7258 wd:Q7261 wd:Q7263 wd:Q7266 }  
   
