@@ -466,7 +466,7 @@ let searchInput = document.getElementById('search-input');
 }
 
 // Fungsi Eksekutor & Algoritma Pengurutan Baru
-function applyIntersectionFilter() {
+function applyIntersectionFilter(preventZoom = false) {
   Cluster.clearLayers();
   let ol = document.getElementById('index-list');
   ol.innerHTML = '';
@@ -523,8 +523,12 @@ function applyIntersectionFilter() {
   });
 
   if (validMarkers.length > 0) {
-    Cluster.addLayers(validMarkers);
-    Map.fitBounds(Cluster.getBounds());
+Cluster.addLayers(validMarkers);
+    
+    // KUNCI PERBAIKAN: Hanya geser peta jika preventZoom bernilai salah (false)
+    if (!preventZoom) {
+      Map.fitBounds(Cluster.getBounds());
+    }
   }
   
   updateFeatureCounts();
