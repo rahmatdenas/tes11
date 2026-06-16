@@ -213,13 +213,14 @@ function populateImportantEventsData(qid) {
 }
 
 // ====================================================================
-// FUNGSI RENDER: Menyuntikkan Data ke Placeholder
+// FUNGSI RENDER: Menyuntikkan Data Peristiwa (DIPERBAIKI)
 // ====================================================================
 function renderEventsInPanel(qid) {
   let record = Records[qid];
-  let container = document.getElementById(`events-container-${qid}`);
   
-  // Cegah error jika elemen tidak ditemukan (misal pengguna sudah menutup panel sebelum loading selesai)
+  // KUNCI PERBAIKAN: Cari elemen di dalam memori panelElem, bukan di seluruh dokumen
+  if (!record.panelElem) return;
+  let container = record.panelElem.querySelector(`#events-container-${qid}`);
   if (!container) return; 
 
   if (record.events && record.events.length > 0) {
@@ -245,8 +246,10 @@ function renderEventsInPanel(qid) {
     container.innerHTML = html;
     container.classList.remove('loading');
   } else {
-    // Jika ternyata bangunan ini tidak punya data peristiwa, hilangkan placeholder
+    // Jika tidak ada data, bersihkan loading dan hilangkan jejaknya
     container.innerHTML = '';
+    container.classList.remove('loading');
+    container.style.display = 'none';
   }
 }
 
@@ -634,34 +637,36 @@ function populateHistoricalImagesData(qid) {
 }
 
 // ====================================================================
-// FUNGSI RENDER ARSIP FOTO
+// FUNGSI RENDER ARSIP FOTO (DIPERBAIKI)
 // ====================================================================
 function renderHistoricalImagesInPanel(qid) {
   let record = Records[qid];
-  let container = document.getElementById(`arsip-container-${qid}`);
-  if (!container) return; // Cegah error jika panel keburu ditutup
+  
+  // KUNCI PERBAIKAN: Cari elemen di dalam memori panelElem
+  if (!record.panelElem) return;
+  let container = record.panelElem.querySelector(`#arsip-container-${qid}`);
+  if (!container) return; 
 
   let html = '';
   
-  // Cetak foto arsip masa lalu/restorasi jika ada
   if (record.pastImage) {
     html += generateFigure(record.pastImage);
   }
   
-  // Cetak foto-foto lingkungan sekitar
   if (record.vicinityImages && record.vicinityImages.length > 0) {
     record.vicinityImages.forEach(imgFilename => {
       html += generateFigure(imgFilename);
     });
   }
 
-  // Jika ada gambar yang berhasil diambil, suntikkan ke placeholder
   if (html !== '') {
     container.innerHTML = '<h2>Arsip & Foto Lingkungan</h2>' + html;
     container.classList.remove('loading');
   } else {
-    // Jika tidak ada data foto arsip untuk bangunan ini, hilangkan wadah loadingnya
+    // Jika tidak ada data foto, bersihkan loading dan hilangkan jejaknya
     container.innerHTML = '';
+    container.classList.remove('loading');
+    container.style.display = 'none';
   }
 }
 
