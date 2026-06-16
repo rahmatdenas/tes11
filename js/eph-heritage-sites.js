@@ -536,12 +536,6 @@ function generateRecordDetails(qid) {
   let titleHtml = `<h1>${record.title}</h1>`;
   let figureHtml = generateFigure(record.imageFilename);
 
-  if (record.vicinityImages && record.vicinityImages.length > 0) {
-    record.vicinityImages.forEach(imgFilename => {
-      figureHtml += generateFigure(imgFilename);
-    });
-  }
-
   let articleHtml;
   if (record.articleTitle) {
     articleHtml = '<div class="article main-text loading"><div class="loader"></div></div>';
