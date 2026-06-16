@@ -187,7 +187,7 @@ optgroup option {
 
 /* Opsional: Efek saat kotak sedang diklik (fokus) agar garis bawah lebih tegas */
 #search-input:focus {
-  border-bottom: 2px solid #822; /* Garis bawah berubah warna/menebal saat diketik */
+  border-bottom: 1px solid #822; /* Garis bawah berubah warna/menebal saat diketik */
 }
 
 /* Gaya Khusus Teks Placeholder */
