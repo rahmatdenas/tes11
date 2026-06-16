@@ -90,7 +90,7 @@ const SPARQL_QUERY_1 =
 
 // 6. SPARQL_QUERY_3: Mengambil gambar dan link Wikipedia
 const SPARQL_QUERY_3 =
-`SELECT ?siteQid (SAMPLE(?imgUtama) AS ?image) ?vicinityImage (SAMPLE(?imgMasaLalu) AS ?pastImage) (SAMPLE(?wikiTitle) AS ?wikipediaUrlTitle) WHERE {
+`SELECT ?siteQid (SAMPLE(?imgUtama) AS ?image) (SAMPLE(?wikiTitle) AS ?wikipediaUrlTitle) WHERE {
   <SPARQLVALUESCLAUSE>
   
   # 1. AMBIL GAMBAR UTAMA (Murni 100%: Bukan Lingkungan & Bukan Masa Lalu)
@@ -101,7 +101,7 @@ const SPARQL_QUERY_3 =
     FILTER NOT EXISTS { ?imageStatement pq:P180 wd:Q192630 }
   }
   
-  # 4. ARTIKEL WIKIPEDIA
+  # 2. ARTIKEL WIKIPEDIA
   OPTIONAL {
     ?wikipedia schema:about ?site ;
                schema:isPartOf <https://id.wikipedia.org/> .
@@ -109,7 +109,7 @@ const SPARQL_QUERY_3 =
   }
   
   BIND (SUBSTR(STR(?site), 32) AS ?siteQid) .
-}`;
+} GROUP BY ?siteQid`;
 
 // 7. SPARQL_QUERY_4: Fungsi khusus mengambil Peristiwa Penting untuk satu ID saat diklik
 function getSparqlQuery4(qid) {
