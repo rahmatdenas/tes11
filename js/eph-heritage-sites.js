@@ -593,17 +593,17 @@ function generateRecordDetails(qid) {
         infoTahunHtml = `<p>Didirikan: Data belum tersedia</p>`;
       }
 
-      let teksLokasi = record.lokasiSpesifik || ORGS[type.org];
+let teksLokasi = record.lokasiSpesifik || ORGS[type.org];
       let infoLokasiHtml = '';
 
-      // --- ANTISIPASI KOORDINAT KOSONG ---
+      // --- ANTISIPASI KOORDINAT KOSONG DENGAN CLASS CSS ---
       if (record.lat && record.lon) {
-        // JIKA ADA KOORDINAT: Buat link Google Maps resmi dan bungkus teksnya dengan tag <a>
-        let mapsUrl = `https://www.google.com/maps?q=${record.lat},${record.lon}`;
-        infoLokasiHtml = `<p>Terletak di: <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" title="Buka di Google Maps" style="text-decoration: underline; color: inherit;">${teksLokasi}, ${type.name}</a></p>`;
+        // JIKA ADA KOORDINAT: Tambahkan class="koordinat-link" di dalam tag <p>
+        let mapsUrl = `https://www.google.com/maps?q=$${record.lat},${record.lon}`;
+        infoLokasiHtml = `<p class="koordinat-link">Terletak di: <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" title="Buka di Google Maps" style="text-decoration: underline; color: inherit;">${teksLokasi}, ${type.name}</a></p>`;
       } else {
-        // JIKA KOORDINAT KOSONG: Cetak sebagai teks biasa tanpa tag <a>
-        infoLokasiHtml = `<p>Terletak di: ${teksLokasi}, ${type.name}</p>`;
+        // JIKA KOORDINAT KOSONG: Tetap pasang class="koordinat-link" agar gayanya seragam
+        infoLokasiHtml = `<p class="koordinat-link">Terletak di: ${teksLokasi}, ${type.name}</p>`;
       }
       
       // --- LOADER VISUAL KEMBALI DI SINI ---
