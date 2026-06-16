@@ -145,17 +145,20 @@
     padding-right: 40px; /* ruang untuk logo Wikidata di kanan atas */
   }
 
-  #details figure {
-    float: none;
-    width: 100%;
-    margin: 0 0 16px 0;
-  }
+/* =================================================== */
+/* CSS RESPONSIVE (Ubah bagian ini)                    */
+/* =================================================== */
+#details figure.gambar-utama {
+  float: none;
+  width: 100%;
+  margin: 0 0 16px 0;
+}
 
-  #details figure img {
-    width: 100%;
-    height: auto;
-     box-sizing: border-box;
-  }   
+#details figure.gambar-utama img {
+  width: 100%;
+  height: auto;
+  box-sizing: border-box;
+}
 
   #details figure.nodata {
     height: 70px;
