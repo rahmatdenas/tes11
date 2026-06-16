@@ -145,7 +145,7 @@ function getSparqlQuery4(qid) {
     
     BIND (SUBSTR(STR(?site), 32) AS ?siteQid) .
   }`;
-
+}
 
 // 8. SPARQL_QUERY_5: Fungsi khusus mengambil arsip gambar untuk satu ID saat diklik
 function getSparqlQuery5(qid) {
