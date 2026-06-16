@@ -45,7 +45,6 @@ function formatWikidataDate(dateString, precision) {
     return yearStr;
   }
 }
-
 // ============================================================
 // FUNGSI UTAMA (DIOPTIMALKAN)
 // ============================================================
@@ -59,22 +58,24 @@ function loadPrimaryData() {
     .then(() => {
       enableApp(); 
 
-      // Tambahkan .catch() di akhir jalur ini!
       populateImageAndWikipediaData()
         .then(() => {
           updateFeatureCounts();      
           applyIntersectionFilter(); 
+          
+          // KUNCI PERBAIKAN: Baca URL Link hanya setelah gambar & artikel siap!
+          processHashChange();
         })
         .catch(error => {
-          // INI ADALAH TANGKAPAN ERROR-NYA
           console.warn("Gagal mengambil data Gambar/Wikipedia dari server, tetapi peta tetap bisa digunakan.", error);
-          // Tetap jalankan perhitungan agar filter tidak rusak
           updateFeatureCounts();      
           applyIntersectionFilter();
+          
+          // Tetap jalankan jika error agar link masih bisa terbuka
+          processHashChange();
         });
     })
     .catch(error => {
-       // Jaring pengaman utama jika data dasar gagal dimuat
        console.error("Data utama gagal dimuat. Cek koneksi atau server Wikidata.", error);
        alert("Maaf, server database sedang sibuk. Beberapa data mungkin tidak tampil.");
     });
@@ -300,7 +301,6 @@ function populateMapAndIndex() {
   Cluster.addLayers(mapMarkers);
   populateDesignationIndexNodes();
   generateFilterSelect();
-  processHashChange();
 }
 
 function populateDesignationIndexNodes() {
