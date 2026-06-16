@@ -157,6 +157,15 @@ optgroup option {
   background: #eee;
 }
 
+
+#details .koordinat-link a {
+  text-decoration: none;
+  color: #a22;
+}
+#details .koordinat-link a:hover {
+  background: #eee;
+}
+
 #details .wikipedia-link a img {
   display: inline-block;
   padding-right: 3px;
