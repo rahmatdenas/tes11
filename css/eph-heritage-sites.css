@@ -166,22 +166,29 @@ optgroup option {
   background: #eee;
 }
 
-/* 1. Mengubah warna teks SAAT DIKETIK menjadi putih */
+/* Gaya Utama Kotak Pencarian */
 #search-input {
-border: 0px solid #FFF;
+  -webkit-appearance: none; /* Mencegah Apple/Safari merusak desain Anda */
+  appearance: none;         /* Mencegah browser lain merusak desain Anda */
+  
+  border: 0px solid #CCCCCC; /* Tambahan garis tepi agar kotak terlihat (opsional) */
   padding: 10px 20px;
   width: 100%;
   box-sizing: border-box;
   display: block;
-  background: #f3e9e9;      /* Warna latar belakang merah gelap */
-  color: #000;        /* Warna teks saat Anda mengetik */
-  border-bottom: 1px solid #eaa;
+  background: #f3e9e9;   
+  color: #000000;        
 }
 
-/* 2. Mengubah warna teks PLACEHOLDER menjadi putih */
+/* Gaya Khusus Teks Placeholder */
 #search-input::placeholder {
-  color: #888888;
-  opacity: 1; /* Sangat penting ditambahkan */
+  color: #888888;        
+  opacity: 1;
+}
+
+/* Opsional: Ubah kursor saat menyorot tombol 'x' */
+#search-input::-webkit-search-cancel-button {
+  cursor: pointer;
 }
 
 #details .wikipedia-link a img {
