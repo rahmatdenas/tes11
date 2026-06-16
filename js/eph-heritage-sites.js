@@ -606,64 +606,84 @@ let designationsHtml = '<h2>Informasi</h2>';
 }
 
 // ====================================================================
-// FUNGSI JARING 4: Mengambil Arsip Foto Saat Diklik (Fase 5)
+// FUNGSI JARING 4: Mengambil Arsip Foto & Keterangan Saat Diklik
 // ====================================================================
 function populateHistoricalImagesData(qid) {
   let record = Records[qid];
-  let queryStr = getSparqlQuery5(qid); // Memanggil kueri dinamis untuk foto
+  let queryStr = getSparqlQuery5(qid); 
+
+  // Bersihkan memori setiap kali diklik agar tidak menumpuk ganda
+  record.vicinityImages = [];
+  record.pastImage = undefined;
 
   return queryWdqsThenProcess(
     queryStr,
     function(result) {
-      // Ambil gambar lingkungan
+      // 1. Ambil gambar lingkungan (Bisa Banyak)
       if ('vicinityImage' in result) {
-        let fotoTambahan = extractImageFilename(result.vicinityImage);
-        if (!record.vicinityImages.includes(fotoTambahan)) {
-          record.vicinityImages.unshift(fotoTambahan);
+        let filename = extractImageFilename(result.vicinityImage);
+        let captionText = result.vicinityCaption ? result.vicinityCaption.value : '';
+        
+        let isDuplicate = record.vicinityImages.some(img => img.file === filename);
+        if (!isDuplicate) {
+          record.vicinityImages.push({ file: filename, caption: captionText });
         }
       }
-      // Ambil gambar masa lalu / arsip sejarah
+      
+      // 2. Ambil gambar masa lalu (Hanya 1)
       if ('pastImage' in result) {
-        if (!record.pastImage) {
-          record.pastImage = extractImageFilename(result.pastImage);
+        if (!record.pastImage) { // Palang pintu: hanya ambil jika belum ada
+          let filename = extractImageFilename(result.pastImage);
+          let captionText = result.pastCaption ? result.pastCaption.value : '';
+          record.pastImage = { file: filename, caption: captionText };
         }
       }
     },
     function() {
-      // CALLBACK: Render ke layar setelah data terkumpul
       renderHistoricalImagesInPanel(qid);
     }
   );
 }
 
 // ====================================================================
-// FUNGSI RENDER ARSIP FOTO (DIPERBAIKI)
+// FUNGSI RENDER: Menyuntikkan Arsip Foto & Keterangan
 // ====================================================================
 function renderHistoricalImagesInPanel(qid) {
   let record = Records[qid];
   
-  // KUNCI PERBAIKAN: Cari elemen di dalam memori panelElem
   if (!record.panelElem) return;
   let container = record.panelElem.querySelector(`#arsip-container-${qid}`);
   if (!container) return; 
 
   let html = '';
   
+  // Mesin pembuat blok HTML: [Keterangan] -> [Foto]
+  function buildImageBlock(imgObj) {
+    let block = '';
+    if (imgObj.caption) {
+      block += `<div class="article main-text"><p>${imgObj.caption}</p></div>`;
+    }
+    block += generateFigure(imgObj.file);
+    return block;
+  }
+
+  // 1. Cetak SATU gambar masa lalu
   if (record.pastImage) {
-    html += generateFigure(record.pastImage);
+    html += buildImageBlock(record.pastImage);
   }
   
+  // 2. Cetak BANYAK gambar lingkungan
   if (record.vicinityImages && record.vicinityImages.length > 0) {
-    record.vicinityImages.forEach(imgFilename => {
-      html += generateFigure(imgFilename);
+    record.vicinityImages.forEach(imgObj => {
+      html += buildImageBlock(imgObj);
     });
   }
 
+  // Finalisasi penempelan ke layar
   if (html !== '') {
     container.innerHTML = '<h2>Arsip & Foto Lingkungan</h2>' + html;
     container.classList.remove('loading');
   } else {
-    // Jika tidak ada data foto, bersihkan loading dan hilangkan jejaknya
     container.innerHTML = '';
     container.classList.remove('loading');
     container.style.display = 'none';
