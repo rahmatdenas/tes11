@@ -58,16 +58,22 @@ function loadPrimaryData() {
     .then(() => {
       enableApp(); 
 
-  populateImageAndWikipediaData()
+      populateImageAndWikipediaData()
         .then(() => {
           updateFeatureCounts();      
-          // Panggil filter, tapi paksa peta agar diam di tempat (true)
+          
+          // KUNCI PERBAIKAN: Hapus ingatan panel yang telanjur terbuat kosong
+          Object.values(Records).forEach(r => r.panelElem = undefined);
+          
+          // Perintahkan aplikasi untuk membaca ulang URL dan merender ulang panel dengan data baru
           processHashChange();
         })
         .catch(error => {
-          console.warn("Gagal mengambil data Gambar/Wikipedia dari server, tetapi peta tetap bisa digunakan.", error);
+          console.warn("Gagal mengambil data Gambar/Wikipedia dari server.", error);
           updateFeatureCounts();      
-          // Sama, paksa peta agar diam jika terjadi error (true)
+          
+          // Tetap hapus ingatan dan render ulang sebagai cadangan jika terjadi error
+          Object.values(Records).forEach(r => r.panelElem = undefined);
           processHashChange();
         });
     })
