@@ -19,6 +19,7 @@
   var isHandleTap    = false; 
   var activeScrollNode = null; 
   var preventNextClick = false; // Penanda untuk membatalkan klik link jika digeser
+  var lastWindowWidth = window.innerWidth;
 
   function isMobile() {
     return window.matchMedia(MOBILE_QUERY).matches;
@@ -171,12 +172,26 @@ function onTouchEnd() {
     panel.insertBefore(handle, panel.firstChild);
   }
 
-  function handleViewportChange() {
+function handleViewportChange() {
     if (!panel) return;
+
+    // Deteksi apakah ukuran yang berubah adalah lebar layar (rotasi HP)
+    var currentWidth = window.innerWidth;
+    var isWidthChanged = currentWidth !== lastWindowWidth;
+    lastWindowWidth = currentWidth;
+
+    // Deteksi apakah pengguna sedang fokus pada kotak input (keyboard muncul)
+    var isInputFocused = document.activeElement && 
+                         (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
 
     if (isMobile()) {
       if (!document.getElementById('panel-handle')) buildHandle();
-      setExpanded(false, false);
+      
+      // LOGIKA BARU: Jangan paksa panel menutup jika pengguna sedang mengetik
+      // (alias keyboard muncul tanpa mengubah lebar layar)
+      if (isWidthChanged || !isInputFocused) {
+        setExpanded(false, false);
+      }
     } else {
       panel.style.transform = '';
       panel.classList.remove('eph-dragging');
