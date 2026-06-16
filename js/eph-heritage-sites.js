@@ -543,7 +543,7 @@ function generateRecordDetails(qid) {
   else {
     articleHtml = '<div class="article main-text nodata"><p>Situs ini belum memiliki artikel Wikipedia berbahasa Indonesia.</p></div>';
   }
-
+let designationsHtml = '<h2>Informasi</h2>';
   designationsHtml += '<ul class="designations">';
 
   Object.keys(record.designations)
